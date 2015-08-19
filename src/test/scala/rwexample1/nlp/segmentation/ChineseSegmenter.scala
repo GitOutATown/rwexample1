@@ -22,12 +22,12 @@ object ChineseSegmenter extends Controller {
   
     // Simple string segmentization
     def segmentizeString = Action { implicit request =>
-          request.body.asJson.map { json =>
-                val sourceText = (json \ "srcTxt").validate[String]
-                val segmented = segmenter.segmentString(sourceText.get)
-                val output = for (segment <- segmented ) yield segment
-                Ok(Json.toJson(output))
-          }.getOrElse {
+        request.body.asJson.map { json =>
+            val sourceText = (json \ "srcTxt").validate[String]
+            val segmented = segmenter.segmentString(sourceText.get)
+            val output = for (segment <- segmented ) yield segment
+            Ok(Json.toJson(output))
+        }.getOrElse {
             BadRequest("Expecting Json data")
         }
     }
@@ -40,11 +40,11 @@ object ChineseSegmenter extends Controller {
             val lineList = lines.getLines.toList
                         
             val tokLines = lineList map { line =>
-                   val tokens = segmenter.segmentString(line)
-                   val output = for {
-                       token <- tokens
-                   } yield Json.toJson(token)
-                   output
+                val tokens = segmenter.segmentString(line)
+                val output = for {
+                    token <- tokens
+                } yield Json.toJson(token)
+                output
             }
             
             Ok(Json.toJson(tokLines))

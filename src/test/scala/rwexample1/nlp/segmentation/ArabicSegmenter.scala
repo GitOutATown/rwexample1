@@ -37,10 +37,12 @@ object ArabicSegmenter extends Controller {
             val srcFile = file.ref.file
             val lines = scala.io.Source.fromFile(srcFile)
             val lineList = lines.getLines.toList
+            
             val tokLines = lineList map { line =>
                 val segmentedString = segmenter.segmentString(line)
                 segmentedString.split(" ")
             }
+            
             Ok(Json.toJson(tokLines))
         }.getOrElse {
             BadRequest("Expecting Json data")

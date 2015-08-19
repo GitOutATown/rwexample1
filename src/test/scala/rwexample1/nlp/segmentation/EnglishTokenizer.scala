@@ -22,18 +22,16 @@ object EnglishTokenizer {
     def tokenizeString = Action { implicit request =>
         request.body.asJson.map { json =>
             val sourceText = (json \ "srcTxt").validate[String]
-            
-            val tokenizer = new PTBTokenizer(new StringReader(sourceText.get),
-                new CoreLabelTokenFactory(), "")
-            
+            val tokenizer = new PTBTokenizer(
+                new StringReader(sourceText.get),
+                new CoreLabelTokenFactory(), ""
+            )
             val tokens = new ListBuffer[String]
             while(tokenizer.hasNext()) {
                 val token = tokenizer.next().word()
                 tokens += token
             }
-    
             Ok(Json.toJson(tokens.toList))
-        
         }.getOrElse {
             BadRequest("Expecting Json data")
         }

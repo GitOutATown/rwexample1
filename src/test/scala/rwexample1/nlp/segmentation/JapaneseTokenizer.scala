@@ -18,9 +18,11 @@ object JapaneseTokenizer extends Controller {
               val sourceText = (json \ "srcTxt").validate[String]
               val tokenizer = AbstractTokenizer.builder().build()
               val tokens = tokenizer.tokenize(sourceText.get)
+              
               val output = for {
                   token <- tokens
               } yield Json.obj("token" -> token.getSurfaceForm(), "features" -> token.getAllFeatures())
+              
               Ok(Json.toJson(output))
         }.getOrElse {
             BadRequest("Expecting Json data")
@@ -34,6 +36,7 @@ object JapaneseTokenizer extends Controller {
             val lines = scala.io.Source.fromFile(srcFile)
             val lineList = lines.getLines.toList
             val tokenizer = AbstractTokenizer.builder().build()
+            
             val tokLines = lineList map { line =>
                 val tokens = tokenizer.tokenize(line)
                 val output = for {
@@ -41,6 +44,7 @@ object JapaneseTokenizer extends Controller {
                 } yield Json.obj("token" -> token.getSurfaceForm(), "features" -> token.getAllFeatures())
                 output
             }
+            
             Ok(Json.toJson(tokLines))
         }.getOrElse {
             BadRequest("Missing file")
