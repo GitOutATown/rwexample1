@@ -20,17 +20,17 @@ import scala.math.log10
  * * How to account for repeat terms in query
  */
 object PhrasalSearch_lab_12 extends App {
-      // Document path
+    // Document path
     val root_path = "Intro IR Manning/"
     val doc_path = "src/main/resources/shakespeare/"
     
     val docList = List[Document](
         Document(IDGenerator.next, "Antony_and_Cleopatra.txt", "William Shakespear"),
-         Document(IDGenerator.next, "Hamlet.txt", "William Shakespear"),
-         Document(IDGenerator.next, "Julius_Caesar.txt", "William Shakespear"),
-         Document(IDGenerator.next, "Macbeth.txt", "William Shakespear"),
-         Document(IDGenerator.next, "Othello.txt", "William Shakespear"),
-         Document(IDGenerator.next, "The_Tempest.txt", "William Shakespear")
+        Document(IDGenerator.next, "Hamlet.txt", "William Shakespear"),
+        Document(IDGenerator.next, "Julius_Caesar.txt", "William Shakespear"),
+        Document(IDGenerator.next, "Macbeth.txt", "William Shakespear"),
+        Document(IDGenerator.next, "Othello.txt", "William Shakespear"),
+        Document(IDGenerator.next, "The_Tempest.txt", "William Shakespear")
     )
   
     // Put docs in Catalog (i.e. Map)
@@ -44,7 +44,7 @@ object PhrasalSearch_lab_12 extends App {
     // Initiate indexing
     docList foreach index
  
-      // ------ Logging indexing results ------ //
+    // ------ Logging indexing results ------ //
     
     println("Dictionary terms size: " + dictionary.keys.size)
     
