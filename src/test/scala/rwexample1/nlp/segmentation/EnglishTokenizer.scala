@@ -1,4 +1,4 @@
-package rwexample1.nlp.tokenizer
+package rwexample1.nlp.segmentation
 
 import play.api.mvc._
 import play.api.libs.json._
