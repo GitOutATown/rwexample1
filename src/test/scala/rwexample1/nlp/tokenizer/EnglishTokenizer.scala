@@ -42,7 +42,7 @@ object EnglishTokenizer {
     // File upload and tokenize
     def tokenizeFile = Action(parse.multipartFormData) { request =>
         request.body.file("file_en").map { file =>
-            val srcFile = file.ref.file // @TODO: Is this a disk write? If so, is it necessary? If so, does it need to be managed (i.e. deleted)
+            val srcFile = file.ref.file
             
             val tokenizer = new PTBTokenizer(new FileReader(srcFile),
                 new CoreLabelTokenFactory(), "")
