@@ -54,8 +54,8 @@ object PhrasalSearch {
     )
     
     object IDGenerator {
-      private val n = new java.util.concurrent.atomic.AtomicLong(100L)
-      def next = n.getAndIncrement
+        private val n = new java.util.concurrent.atomic.AtomicLong(100L)
+        def next = n.getAndIncrement
     }
     
     type QueryTermResults = List[scala.collection.immutable.Map[Long, Incidences]]
@@ -69,21 +69,21 @@ object PhrasalSearch {
     // ------ Processing Functionality ---------- //
     
     def preprocess(str: String): Array[String] = {
-      str.split("[ !,.:;]+").map(_.toLowerCase)
+        str.split("[ !,.:;]+").map(_.toLowerCase)
     }
  
       // Inverse index model: dictionary of term postings.
     def indexDocument(path: String)(doc: Document) {
-          val tokenLocation = 0 // token location initialization for document
-          Source.fromFile(path + doc.name)
-          .getLines.flatMap(preprocess(_)) // bypass lines for direct mapping of tokens
-          .foldLeft(tokenLocation){ // incoming location of immediate prededecessor
-              (tokenLocation, token) => { // (previous token's location, current token)
-                  val tokLocIncr = tokenLocation + 1 // increment token location
-                  doc.tokensTotal += 1
+        val tokenLocation = 0 // token location initialization for document
+        Source.fromFile(path + doc.name)
+                .getLines.flatMap(preprocess(_)) // bypass lines for direct mapping of tokens
+                .foldLeft(tokenLocation){ // incoming location of immediate prededecessor
+            (tokenLocation, token) => { // (previous token's location, current token)
+                val tokLocIncr = tokenLocation + 1 // increment token location
+                doc.tokensTotal += 1
                   
-                  // record location of this instance, uses side effects
-                  dictionary.get(token) match {
+                // record location of this instance, uses side effects
+                dictionary.get(token) match {
                     case Some(term) => { // retrieving term from dictionary
                         val docLocations = term.allIncidences.get(doc.id) match {
                             case Some(docIncidences) => {
@@ -145,39 +145,38 @@ object PhrasalSearch {
                 case leftTerm :: Nil => accum // we're done!
                 case leftTerm :: xs => { // leftTerm is a Map of Instances per docId for this term
                     val biwords = for{
-                          leftDocIncidences <- leftTerm.values // iterate each individual document's Incidences for this term
+                        leftDocIncidences <- leftTerm.values // iterate each individual document's Incidences for this term
                         leftTermIndexInDoc <- leftDocIncidences.locs.indexes // iterate each location of the left term in this doc
-                           leftTermStr = leftDocIncidences.locs.term // term (string)
-                           docId = leftDocIncidences.locs.docId // the id of the doc being queried
-                           // Now see if the next term in the phrase query is also in this document, 
-                           // and if so, is the location value leftIndex + 1
-                           rightTermLocationIndex = xs.head.get(docId) match { // right term locations in this document
-                               case Some(incds) => { // Yes, this document also contains the next term in the phrase
-                                   // So does that term exist at leftIndex + 1 ?
-                                   incds.locs.indexes.toList.indexOf(leftTermIndexInDoc + 1) // TODO: This should be refactored to return the list of indexes if they exist so as to not repeat the operation in the yield below
-                               }
-                               case None => -1 // next term not in this doc, so we will not yield anything
-                           }                          
-                          if rightTermLocationIndex > -1 // if true, we've found a sequential pair
-                      } yield { // therefor
-                          // TODO: Try implicit conversion? Simplify structure? Use companion object behavior? 
-                          // See: http://en.wikipedia.org/wiki/Law_of_DemeterA
-                          // I have already determined this value via indexOf above, so this is not actually necessary, however, this verifies it, which is good while in development
-                          val rightTermIndexInDoc = xs.head.get(docId).get.locs.indexes.toList(rightTermLocationIndex)
-                          val rightTermStr = xs.head.get(docId).get.locs.term
-                          // package up the sequential pair of phrase terms we've found in our document
-                          BiWord(
-                              docId,
-                              leftTermIndexInDoc, rightTermIndexInDoc,
-                              leftTermStr, rightTermStr
-                          )
-                      }
-                      inter(xs, accum ++ List(biwords.toList)) // recurse next term
+                            leftTermStr = leftDocIncidences.locs.term // term (string)
+                            docId = leftDocIncidences.locs.docId // the id of the doc being queried
+                            // Now see if the next term in the phrase query is also in this document, 
+                            // and if so, is the location value leftIndex + 1
+                            rightTermLocationIndex = xs.head.get(docId) match { // right term locations in this document
+                                case Some(incds) => { // Yes, this document also contains the next term in the phrase
+                                    // So does that term exist at leftIndex + 1 ?
+                                    incds.locs.indexes.toList.indexOf(leftTermIndexInDoc + 1) // TODO: This should be refactored to return the list of indexes if they exist so as to not repeat the operation in the yield below
+                                }
+                                case None => -1 // next term not in this doc, so we will not yield anything
+                            }                          
+                            if rightTermLocationIndex > -1 // if true, we've found a sequential pair
+                    } yield { // therefor
+                        // TODO: Try implicit conversion? Simplify structure? Use companion object behavior? 
+                        // See: http://en.wikipedia.org/wiki/Law_of_DemeterA
+                        // I have already determined this value via indexOf above, so this is not actually necessary, however, this verifies it, which is good while in development
+                        val rightTermIndexInDoc = xs.head.get(docId).get.locs.indexes.toList(rightTermLocationIndex)
+                        val rightTermStr = xs.head.get(docId).get.locs.term
+                        // package up the sequential pair of phrase terms we've found in our document
+                        BiWord(
+                            docId,
+                            leftTermIndexInDoc, rightTermIndexInDoc,
+                            leftTermStr, rightTermStr
+                        )
+                    }
+                    inter(xs, accum ++ List(biwords.toList)) // recurse next term
                 } // end case x :: xs
-                
             } // end terms match
         } // end inter
-        
+    
         inter(queryTermResults, List.empty[List[BiWord]])
         
     } // end biWord
