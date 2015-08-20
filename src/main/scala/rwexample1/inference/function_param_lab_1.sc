@@ -29,5 +29,5 @@ object function_param_lab_1 {
   // ----- Example 2 ----- //
   
   def func3(f: Foo) {}                            //> func3: (f: lab.concurrency.function_param_lab_1.Foo)Unit
-  // func3(x) // not found: value y
+  // func3(y) // not found: value y
 }
