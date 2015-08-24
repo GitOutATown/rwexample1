@@ -10,7 +10,7 @@ import util.MathUtil._
  * I am, somewhat paradocically, using Maps instead of Matrices as my 
  * mechanism for tallying, counting, and looking up frequency values.
  * This is an early stage convience for developing my intuition for 
- * Semantic Vectory Models.
+ * Semantic Vector Models.
  */
 import scala.collection.mutable.Map
 
